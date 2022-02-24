@@ -10,6 +10,6 @@ router.post("/", createValidationFor('create'), checkValidationResult, controlle
 router.put("/:id", createValidationFor('update'), checkValidationResult, controller.update);
 router.delete("/:id", createValidationFor('remove'), checkValidationResult, controller.remove);
 router.get("/:id", createValidationFor('findOne'), checkValidationResult, controller.findOne);
-router.get("/", controller.findAll);
+router.get("/", createValidationFor('findAll'), checkValidationResult, controller.findAll);
 
 module.exports = router;

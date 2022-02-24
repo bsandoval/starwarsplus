@@ -116,9 +116,46 @@ async function findOne(req, res) {
 };
 
 async function findAll(req, res) {
+    const perPage = req.query.perPage ? req.query.perPage : 10;
+    const page = req.query.page ? req.query.page - 1 : 0;
+    const skip = page * perPage;
+
+    let query = {};
+
+    if (req.query.name) {
+        query.name = req.query.name;
+    }
+
+    if (req.query.homeworld) {
+        query.homeworld = req.query.homeworld;
+    }
+
+    if (req.query.gender) {
+        query.gender = req.query.gender;
+    }
+
+    if (req.query.specie) {
+        query.specie = req.query.specie;
+    }
+
     try {
-        let users = await User.find({}).exec();
-        return res.status(200).send(users);
+        let users = await User.find({ ...query }).select("name").sort({ created: -1 }).skip(skip).limit(perPage).exec();
+
+        const totalDocuments = await User.find({ ...query }).count()
+        let nextPage = page + 2;
+
+        if (nextPage > totalDocuments) {
+            nextPage = null;
+        }
+        const previousPage = page > 0 ? page : null;
+
+        return res.status(200).send({
+            count: totalDocuments,
+            next: nextPage,
+            previous: previousPage,
+            results: users.map(u => u.name)
+        });
+
     } catch (error) {
         console.log(error)
         return res.status(500).send({ message: "Error while retrieving users" });

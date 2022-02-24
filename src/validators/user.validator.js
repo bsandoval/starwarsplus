@@ -24,6 +24,16 @@ function createValidationFor(route) {
                 body("gender").isIn(["male", "female"]).optional(),
                 body("specie").isString().trim().optional(),
             ];
+        case 'findAll':
+            return [
+                check("page").isInt({ min: 1 }).optional(),
+                check("perPage").isInt({ min: 5 }).optional(),
+                check("name").isString().isLength({ min: 1, max: 200 }).optional(),
+                check("height").isInt({ min: 1 }).optional(),
+                check("homeworld").isString().trim().optional(),
+                check("gender").isIn(["male", "female"]).optional(),
+                check("specie").isString().trim().optional(),
+            ];
         case 'remove':
         case 'findOne':
             return [check("id").isMongoId()];
